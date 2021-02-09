@@ -33,7 +33,7 @@ Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For
 Replace `<<CLUSTER-NAME>>` with your cluster's name.
 
 ```shell
-helm install --namespace=kube-system \
+helm install --namespace=monitoring \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
 --set secrets.logzioRegion='<<LISTENER-REGION>>' \
 --set secrets.clusterName='<<CLUSTER-NAME>>' \
@@ -67,7 +67,7 @@ In the following commands, make the following changes:
 
 This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover-hints.html). If you wish to deploy it use:
 ```shell
-helm install --namespace=kube-system \
+helm install --namespace=monitoring \
 --set configType='autodiscover' \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
 --set secrets.logzioRegion='<<LISTENER-REGION>>' \
@@ -76,7 +76,7 @@ logzio-k8s-logs logzio-helm/logzio-k8s-logs
 ```
 If you have a custom configuration, deploy with:
 ```shell
-helm install --namespace=kube-system \
+helm install --namespace=monitoring \
 --set configType='auto-custom' \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
 --set secrets.logzioRegion='<<LISTENER-REGION>>' \
@@ -127,7 +127,7 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `apiVersions.clusterRole` | ClusterRole API version. | `rbac.authorization.k8s.io/v1` |
 | `apiVersions.serviceAccount` | ServiceAccount API version. | `v1` |
 | `apiVersions.secret` | Secret API version. | `v1` |
-| `namespace` | Chart's namespace. | `kube-system` |
+| `namespace` | Chart's namespace. | `monitoring` |
 | `managedServiceAccount` | Specifies whether the serviceAccount should be managed by this Helm Chart. Set this to `false` to manage your own service account and related roles. | `true` |
 | `clusterRoleRules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Filebeat uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `logzioCert` | Logzio public SSL certificate. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
@@ -157,7 +157,7 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install`. For example,
 
 ```shell
-helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs \
+helm install --namespace=monitoring logzio-k8s-logs logzio-helm/logzio-k8s-logs \
   --set imageTag=7.7.0 \
   --set terminationGracePeriodSeconds=30
 ```
@@ -168,11 +168,13 @@ The command removes all the k8s components associated with the chart and deletes
 To uninstall the `logzio-k8s-logs` deployment:
 
 ```shell
-helm uninstall --namespace=kube-system logzio-k8s-logs
+helm uninstall --namespace=monitoring logzio-k8s-logs
 ```
 
 
 ## Change log
+ - **0.0.3**:
+    - Changed Chart's default namespace to `monitoring`.
  - **0.0.2**:
     - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
  - **0.0.1**:

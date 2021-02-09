@@ -23,7 +23,13 @@ You have two options for deployment:
 
 ### Automatic deployment:
 
-#### 1. Run the automated deployment script
+#### 1. Create a monitoring namespace
+Your Helm Chart will be deployed under the namespace monitoring.
+```shell
+kubectl create namespace monitoring
+```
+
+#### 2. Run the automated deployment script
 ```shell
 bash <(curl -s https://raw.githubusercontent.com/logzio/logzio-helm/master/quickstart-metrics.sh)
 ```
@@ -38,7 +44,7 @@ bash <(curl -s https://raw.githubusercontent.com/logzio/logzio-helm/master/quick
 | Cluster name (Default: `detected by the script`) | The name of the Kubernetes cluster you’re deploying in. |
 | Standard or autodiscover deployment (Default: `standard`) | To deploy with [configuration templates](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover.html) answer 'autodiscover'. |
 
-#### 2. Check Logz.io for your metrics
+#### 3. Check Logz.io for your metrics
 Give your metrics some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
 
 </div>
@@ -48,14 +54,19 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 ### Manual deployment:
 
 
+#### 1. Create a monitoring namespace
+Your Helm Chart will be deployed under the namespace monitoring.
+```shell
+kubectl create namespace monitoring
+```
 
-#### 1. Add logzio-k8s-metrics repo to your helm repo list
+#### 2. Add logzio-k8s-metrics repo to your helm repo list
 
 ```shell
 helm repo add logzio-helm https://logzio.github.io/logzio-helm/metricbeat
 ```
 
-#### 2. Deploy
+#### 3. Deploy
 
 You have three options for deployment:
 * [Standard configuration](#standard-config)
@@ -74,7 +85,7 @@ Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `li
 Replace `<<KUBE-STATE-METRICS-NAMESPACE>>`, `<<KUBE-STATE-METRICS-PORT>>`, and `<<CLUSTER-NAME>>` in this command to save your cluster details as a Kubernetes secret.
 
 ```shell
-helm install --namespace=kube-system \
+helm install --namespace=momitoring \
 --set=secrets.MetricsToken=<<METRICS-TOKEN>> \
 --set=secrets.ListenerHost=<<LISTENER-HOST>> \
 --set=secrets.ClusterName=<<CLUSTER-NAME>> \
@@ -90,7 +101,7 @@ logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
 This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-hints.html):
 
 ```shell
-helm install --namespace=kube-system \
+helm install --namespace=monitoring \
 --set configType='autodiscover' \
 --set=secrets.MetricsToken=<<METRICS-TOKEN>> \
 --set=secrets.ListenerHost=<<LISTENER-HOST>> \
@@ -108,7 +119,7 @@ logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
 
 #### Deploy with custom configuration:  
 ```shell
-helm install --namespace=kube-system \
+helm install --namespace=monitoring \
 --set=secrets.MetricsToken=<<METRICS-TOKEN>> \
 --set=secrets.ListenerHost=<<LISTENER-HOST>> \
 --set=secrets.ClusterName=<<CLUSTER-NAME>> \
@@ -149,7 +160,7 @@ metricbeat.yml: |-
 
 </div>
 
-#### 5. Check Logz.io for your metrics
+#### 4. Check Logz.io for your metrics
 
 Give your metrics some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
 
@@ -167,8 +178,8 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `apiVersions.Deployment` | API version of `deployment.yaml.` | `apps/v1` |
 | `apiVersions.DaemonSet` | API version of `daemonset.yaml`. | `apps/v1` |
 | `apiVersions.ServiceAccount` | API version of `serviceaccount.yaml`. | `v1` |
-| `apiVersions.ClusterRole` | API version of `clusterrole.yaml`. | `rbac.authorization.k8s.io/v1beta1` |
-| `apiVersions.ClusterRoleBinding` | API version of `clusterrolebinding.yaml`. | `rbac.authorization.k8s.io/v1beta1` |
+| `apiVersions.ClusterRole` | API version of `clusterrole.yaml`. | `rbac.authorization.k8s.io/v1` |
+| `apiVersions.ClusterRoleBinding` | API version of `clusterrolebinding.yaml`. | `rbac.authorization.k8s.io/v1` |
 | `apiVersions.Secrets` | API version of `secrets.yaml`. | `v1` |
 | `shippingProtocol` | Shipping protocol. | `http` |
 | `shippingPort` | Shipping port. | `10255` |
@@ -203,7 +214,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `deployment.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat Deployment pod execution environment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.resources` | Allows you to set the resources for Metricbeat Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.secretMounts` | Allows you to easily mount a secret as a file inside the Deployment Useful for mounting certificates and other secrets. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
-| `namespace` | Chart's namespace | `kube-system` |
+| `namespace` | Chart's namespace | `monitoring` |
 | `secrets.MetricsToken`| Secret with your [logz.io Metrics token](https://docs.logz.io/user-guide/accounts/finding-your-metrics-account-token/). | `""` |
 | `secrets.ListenerHost`| Secret with your [logz.io listener host](https://docs.logz.io/user-guide/accounts/account-region.html#available-regions). | `""` |
 | `secrets.ClusterName`| Secret with your cluster name. | `""` |
@@ -213,13 +224,13 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 If you wish to change the default values, specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```shell
-helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
+helm install --namespace=monitoring logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
   --set=imageTag=7.7.0,terminationGracePeriodSeconds=30
 ```
 
 To override configurations such as `metricbeatConfig.autoCustomConfig`, `deployment.metricbeatConfig.custom` and `daemonset.metricbeatConfig.custom`, use the `--set-file` argument in `helm install`. For example,
 ```shell
-helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
+helm install --namespace=monitoring logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
   --set-file deployment.metricbeatConfig.custom=/path/to/your/config.yaml
 ```
 
@@ -229,11 +240,14 @@ The command removes all the k8s components associated with the chart and deletes
 To uninstall the `logzio-k8s-metrics` deployment:
 
 ```shell
-helm uninstall --namespace=kube-system logzio-k8s-metrics
+helm uninstall --namespace=monitoring logzio-k8s-metrics
 ```
 
 
 ## Change log
+  - **0.0.7**:
+    - Changed Chart's default namespace to `monitoring`.
+    - Updated apiVersion for `ClusterRole` and `ClusterRoleBinding`.
   - **0.0.6**:
     - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
   - **0.0.5**:

@@ -87,8 +87,8 @@ if [[ $shipping_protocol == "https" ]]; then
   shipping_port="10250"
 fi
 
-read -ep "Target namespace to deploy [kube-system]: " namespace
-namespace=${namespace:-"kube-system"}
+read -ep "Target namespace to deploy [monitoring]: " namespace
+namespace=${namespace:-"monitoring"}
 
 read -ep "Deploy with standard or autodiscover configuration? [standard]: " deployment_config
 deployment_config=${deployment_config:-"standard"}

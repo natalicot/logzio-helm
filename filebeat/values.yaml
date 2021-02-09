@@ -11,7 +11,7 @@ apiVersions:
   serviceAccount: v1
   secret: v1
 
-namespace: kube-system
+namespace: monitoring
 
 managedServiceAccount: true
 
